@@ -1,17 +1,31 @@
 import React from "react";
 import { View, StyleSheet, Text } from "react-native";
+import { useSelector } from "react-redux";
+
+import { currentThemeState } from "./ThemeSlice";
+import { currentDataState } from "./DataSlice";
 
 import { Fonts } from "./Theme";
 
-const Expression = ({ mainText, overHead, theme }) => {
+const Expression = () => {
+  const currentTheme = useSelector(currentThemeState);
+  const theme = currentTheme.data;
+  const currentData = useSelector(currentDataState);
+
   return (
     <View style={styles.expressionView}>
       <Text
-        style={[Fonts.default, styles.smallText, { color: theme.basic.fg }]}
+        style={[
+          currentData.answer != "" ? Fonts.default : Fonts.big,
+          styles.smallText,
+          { color: theme.primary },
+        ]}
       >
-        {overHead}
+        {currentData.expression}
       </Text>
-      <Text style={[Fonts.big, { color: theme.basic.fg }]}>{mainText}</Text>
+      <Text style={[Fonts.big, { color: theme.primary }]}>
+        {currentData.answer}
+      </Text>
     </View>
   );
 };

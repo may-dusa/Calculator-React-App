@@ -6,29 +6,33 @@ import {
   FlatList,
   Text,
 } from "react-native";
-
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useSelector, useDispatch } from "react-redux";
+
+import {
+  addToExp,
+  clrExp,
+  backSpExp,
+  addParentheses,
+  getAns,
+} from "./DataSlice";
+import { currentThemeState } from "./ThemeSlice";
 
 import { Fonts } from "./Theme";
 
-const ButtonGrid = ({
-  addToExp,
-  addParentheses,
-  backSpExp,
-  clrExp,
-  getAns,
-  theme,
-}) => {
+const ButtonGrid = () => {
+  const currentTheme = useSelector(currentThemeState);
+  const theme = currentTheme.data;
   const buttonContent = [
     {
       name: "alpha-c",
       theme: "new",
-      onPress: clrExp,
+      onPress: [clrExp, ""],
     },
     {
       name: "backspace-outline",
       theme: "ops",
-      onPress: backSpExp,
+      onPress: [backSpExp, ""],
     },
 
     {
@@ -109,7 +113,7 @@ const ButtonGrid = ({
     {
       name: "code-parentheses",
       theme: "num",
-      onPress: addParentheses,
+      onPress: [addParentheses, ""],
     },
     {
       name: "circle-small",
@@ -119,25 +123,25 @@ const ButtonGrid = ({
     {
       name: "equal",
       theme: "ops",
-      onPress: getAns,
+      onPress: [getAns, ""],
     },
   ];
 
   function buttonTheme(themeType) {
     if (themeType == "new") {
       return {
-        bg: theme.accent1.bg,
-        fg: theme.accent1.fg,
+        bg: theme.secondaryVariation,
+        fg: theme.secondary,
       };
     } else if (themeType == "ops") {
       return {
-        bg: theme.accent2.bg,
-        fg: theme.accent2.fg,
+        bg: theme.tertiaryVariation,
+        fg: theme.tertiary,
       };
     } else {
       return {
-        bg: theme.basic.bg,
-        fg: theme.basic.fg,
+        bg: theme.primaryVariation,
+        fg: theme.primary,
       };
     }
   }
@@ -180,15 +184,10 @@ const styles = StyleSheet.create({
 });
 
 const Button = ({ content, theme, onP }) => {
+  const dispatch = useDispatch();
   return (
     <TouchableOpacity
-      onPress={() => {
-        if (typeof onP == "function") {
-          onP();
-        } else {
-          onP[0](onP[1]);
-        }
-      }}
+      onPress={() => dispatch(onP[0](onP[1]))}
       style={[styles.button, { backgroundColor: theme.bg }]}
     >
       {!isNaN(content) ? (

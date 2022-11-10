@@ -2,9 +2,14 @@ import React from "react";
 import { View, StyleSheet, Switch } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { Fonts } from "./Theme";
+import { changeToDark, changeToLight, currentThemeState } from "./ThemeSlice";
+import { useDispatch, useSelector } from "react-redux";
 
-const Toolbar = ({ themeMode, theme, changeTheme }) => {
+const Toolbar = () => {
+  const currentTheme = useSelector(currentThemeState);
+  const theme = currentTheme.data;
+  const dispatch = useDispatch();
+
   return (
     <View style={styles.toolbarView}>
       {/* Theme changer */}
@@ -13,22 +18,21 @@ const Toolbar = ({ themeMode, theme, changeTheme }) => {
           name="moon-waning-crescent"
           size={24}
           style={styles.iconView}
-          color={theme.basic.fg}
+          color={theme.primary}
         />
         <Switch
-          value={themeMode.toString() == "light"}
+          value={currentTheme.theme == "dark"}
           trackColor={{
-            false: theme.basic.bg,
-            true: theme.basic.bg,
+            false: theme.background,
+            true: theme.background,
           }}
           thumbColor="white"
           ios_backgroundColor={{
-            false: theme.basic.bg,
-            true: theme.basic.bg,
+            false: theme.background,
+            true: theme.background,
           }}
-          onChange={() => {
-            console.log("clicked");
-            changeTheme(themeMode == "light" ? "dark" : "light");
+          onValueChange={(value) => {
+            dispatch(value ? changeToDark() : changeToLight());
           }}
           style={{ marginHorizontal: 8 }}
         />
@@ -36,7 +40,7 @@ const Toolbar = ({ themeMode, theme, changeTheme }) => {
           name="white-balance-sunny"
           size={24}
           style={styles.iconView}
-          color={theme.basic.fg}
+          color={theme.primary}
         />
       </View>
       {/* History */}
